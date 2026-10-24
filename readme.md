@@ -1,39 +1,24 @@
-# 🧬 Algoritmo Genético para o TSP
+# Algoritmo genetico para o TSP
 
-Trabalho de **Pesquisa Operacional**: um algoritmo genético que busca boas rotas
-para o **Problema do Caixeiro Viajante (TSP)** em pontos 2D.
+Algoritmo genetico que busca boas rotas para o Problema do Caixeiro Viajante
+(TSP) em pontos 2D. O programa gera uma instancia, evolui uma populacao de
+rotas e grava um snapshot por epoca em CSV e JSON.
 
-O programa gera uma instância, evolui uma população de rotas por várias gerações
-e grava **um snapshot por época** em CSV e JSON.
-
-```
-     população inicial (época 0)
-              │
-              ▼
-   ┌──────────────────────┐
-   │ seleção   (torneio)  │
-   │ cruzamento (OX)      │
-   │ mutação   (swap)     │
-   │ elitismo             │
-   └──────────┬───────────┘
-              ▼
-      avalia → melhorou? → snapshot → parou?
-              │
-              └──── repete por geração
-```
-
----
-
-## ⚡ Início rápido
+## Compilar
 
 ```bash
-make          # compila o programa
-./ag_tsp      # roda o cenário circular com 20 pontos
+make
 ```
 
-Saída esperada:
+## Rodar
 
+```bash
+./ag_tsp
 ```
+
+Saida esperada:
+
+```text
 cenario    : circular
 pontos     : 20
 populacao  : 100
@@ -44,7 +29,7 @@ mutacao    : 0.10
 semente    : 42
 epocas     : 138
 parada     : estagnacao
-tempo      : 0.021 s
+tempo      : 0.017 s
 inicial    : 1027.818666
 final      : 312.868930
 otima      : 312.868930
@@ -53,87 +38,90 @@ csv        : resultados/metricas_circular_42.csv
 json       : resultados/historico_circular_42.json
 ```
 
----
+## Cenarios
 
-## 🗺️ Os dois cenários
+circular: pontos igualmente espacados em um circulo. Tem otimo conhecido,
+D = 2nR*sen(pi/n), e o programa mostra as linhas otima e erro.
 
-| Cenário | Flag | Pontos | Ótimo conhecido? | Para que serve |
-|---|---|---|---|---|
-| **Circular** | `-c circular` (padrão) | igualmente espaçados num círculo | ✅ `D* = 2nR·sen(π/n)` | benchmark; mostra o erro % |
-| **Aleatório** | `-c aleatorio` | uniformes em `[0,100] × [0,100]` | ❌ | instância sem resposta pronta |
+aleatorio: pontos uniformes em [0,100] x [0,100]. Nao tem otimo conhecido.
 
 ```bash
-./ag_tsp -c circular     # benchmark (padrão)
-./ag_tsp -c aleatorio    # instância aleatória
+./ag_tsp -c circular
+./ag_tsp -c aleatorio
 ```
 
-No circular aparecem as linhas `otima` e `erro`. No aleatório elas não existem,
-porque não há ótimo conhecido para comparar.
+## Flags
 
----
-
-## 🎛️ Todas as flags
-
-| Flag | Nome | Padrão | O que faz |
-|---|---|---|---|
-| `-n N` | pontos | `20` | número de cidades (mínimo **8**) |
-| `-c C` | cenário | `circular` | `circular` ou `aleatorio` |
-| `-p N` | população | `100` | indivíduos por geração |
-| `-g N` | gerações | `500` | teto de gerações |
-| `-e N` | elite | `2` | melhores copiados intactos para a próxima geração |
-| `-k N` | torneio | `3` | competidores sorteados em cada seleção |
-| `-t X` | cruzamento | `0.80` | probabilidade de cruzamento (0 a 1) |
-| `-m X` | mutação | `0.10` | probabilidade de mutação por filho (0 a 1) |
-| `-s N` | estagnação | `100` | para após N gerações sem melhorar (`0` desativa) |
-| `-S N` | semente | `42` | semente do gerador aleatório |
-| `-r X` | raio | `50` | raio do círculo (só no cenário circular) |
-| `-o DIR` | saída | `resultados` | pasta onde grava CSV e JSON (criada se não existir) |
-| `-C ARQ A B` | comparar | — | compara as épocas **A** e **B** de um CSV já gravado |
-| `-h` | ajuda | — | mostra todas as flags no terminal |
-
-### Como a parada funciona
-
+```text
+-n N        numero de pontos (padrao 20, minimo 8)
+-c C        cenario: circular ou aleatorio (padrao circular)
+-p N        tamanho da populacao (padrao 100)
+-g N        geracoes maximas (padrao 500)
+-e N        individuos de elite (padrao 2)
+-k N        tamanho do torneio (padrao 3)
+-t X        taxa de cruzamento, 0 a 1 (padrao 0.80)
+-m X        taxa de mutacao, 0 a 1 (padrao 0.10)
+-s N        estagnacao maxima, 0 desativa (padrao 100)
+-S N        semente do gerador aleatorio (padrao 42)
+-r X        raio do circulo (padrao 50)
+-o DIR      diretorio de saida (padrao resultados)
+-C ARQ A B  compara as epocas A e B de um CSV ja gravado
+-h          mostra a ajuda
 ```
+
+## Como a parada funciona
+
 epoca_final = min(geracoes_max, ultima_melhora + estagnacao_max)
-snapshots   = epoca_final + 1        (inclui a época 0)
-```
 
-- `-g` é o **teto duro**.
-- `-s` é a **parada antecipada**: quantas gerações seguidas sem bater o recorde.
-- O que acontecer primeiro vence.
+snapshots = epoca_final + 1, incluindo a epoca 0.
 
-Exemplo: última melhora na época 174, `-s 100` → para na 274.
+O -g e o teto duro. O -s e a parada antecipada: quantas geracoes seguidas sem
+bater o recorde global. O que acontecer primeiro vence.
 
----
+Exemplo: ultima melhora na epoca 174 com -s 100 para na epoca 274.
 
-## 📋 Receitas de comandos
+## Comandos
 
-### Rodar
+Rodar o padrao:
 
 ```bash
-# padrão: circular, 20 pontos
 ./ag_tsp
+```
 
-# circular com mais pontos
+Circular com mais pontos:
+
+```bash
 ./ag_tsp -c circular -n 30
 ./ag_tsp -c circular -n 50
+```
 
-# aleatório
+Aleatorio:
+
+```bash
 ./ag_tsp -c aleatorio -n 20
 ./ag_tsp -c aleatorio -n 30
 ./ag_tsp -c aleatorio -n 50
+```
 
-# ensaio maior (mais população e gerações)
+Ensaio maior:
+
+```bash
 ./ag_tsp -c circular -n 100 -p 200 -g 2000 -S 7
+```
 
-# forçar rodar até o teto, ignorando a estagnação
+Rodar ate o teto, sem parada por estagnacao:
+
+```bash
 ./ag_tsp -c aleatorio -n 30 -g 1000 -s 0
+```
 
-# mudar o raio do círculo
+Mudar o raio do circulo:
+
+```bash
 ./ag_tsp -c circular -n 20 -r 100
 ```
 
-### Repetir com sementes diferentes
+Repetir com varias sementes:
 
 ```bash
 for s in 1 2 3 4 5; do
@@ -141,14 +129,10 @@ for s in 1 2 3 4 5; do
 done
 ```
 
-> ⚠️ No cenário aleatório, a semente controla **os pontos e o AG**.
-> Para comparar só o AG, use o cenário circular (os pontos são sempre os mesmos).
+No cenario aleatorio a semente controla os pontos e o AG. Para comparar so o
+AG, use o cenario circular, onde os pontos sao sempre os mesmos.
 
-### Separar cada experimento numa pasta
-
-Os nomes dos arquivos são `metricas_<cenario>_<semente>.csv`. O `n` **não** entra
-no nome, então rodar com outro `n` e a mesma semente **sobrescreve** o resultado.
-Use `-o` para evitar:
+Separar cada experimento em uma pasta:
 
 ```bash
 ./ag_tsp -c circular -n 20  -S 42 -o resultados/n20
@@ -156,132 +140,107 @@ Use `-o` para evitar:
 ./ag_tsp -c aleatorio -n 30 -S 42 -o resultados/aleat30
 ```
 
-### Comparar duas épocas
+Os arquivos se chamam metricas_cenario_semente.csv. O n nao entra no nome, entao
+rodar com outro n e a mesma semente sobrescreve o resultado anterior.
+
+Comparar duas epocas:
 
 ```bash
 ./ag_tsp -C resultados/metricas_circular_42.csv 0 50
 ```
 
-Saída:
+Saida:
 
-```
+```text
 Epoca 0: distancia 1027.818666 | melhor global 1027.818666
 Epoca 50: distancia 312.868930 | melhor global 312.868930
 Melhoria 0 -> 50: 714.949735 (69.560%)
 ```
 
-### Testes e limpeza
+Testes e limpeza:
 
 ```bash
-make test     # roda os testes do motor (53 verificações)
-make clean    # apaga os binários
-./ag_tsp -h   # lista as flags
+make test
+make clean
+./ag_tsp -h
 ```
 
----
+## Saidas
 
-## 🧠 O que o algoritmo faz
-
-| Conceito | No TSP |
-|---|---|
-| Gene | índice de uma cidade (`0..n-1`) |
-| Cromossomo | uma permutação = uma rota |
-| Aptidão | `fitness = 1 / (1 + D)` |
-| Distância | `D = Σ d(P[rota[i]], P[rota[(i+1) % n]])` |
-| Objetivo | **minimizar** `D` |
-
-- **Seleção:** torneio de `k` indivíduos (padrão 3).
-- **Cruzamento:** Order Crossover (OX), que preserva a ordem relativa dos pais
-  sem gerar cidades duplicadas.
-- **Mutação:** swap de duas posições, com probabilidade `-m` por filho.
-- **Elitismo:** os `-e` melhores passam intactos — o recorde nunca piora.
-- **Snapshots:** cada época guarda a melhor rota da época e a melhor global,
-  além de média, pior e tempo acumulado.
-
----
-
-## 📊 Arquivos gerados
-
-```
-resultados/
-├── metricas_<cenario>_<semente>.csv    # uma linha por época
-└── historico_<cenario>_<semente>.json  # pontos + parâmetros + rotas
+```text
+resultados/metricas_cenario_semente.csv
+resultados/historico_cenario_semente.json
 ```
 
-### Colunas do CSV
+O CSV tem uma linha por epoca. O JSON tem os pontos, os parametros, a semente,
+o motivo da parada e as rotas de cada epoca.
 
-| Coluna | Significado |
-|---|---|
-| `epoca` | índice da época (começa em 0) |
-| `distancia_epoca` | melhor distância **daquela** época |
-| `distancia_media` | média da população na época |
-| `distancia_pior` | pior indivíduo da população |
-| `distancia_global` | melhor distância **até aquela** época |
-| `tempo_segundos` | tempo acumulado desde o início |
+## Colunas do CSV
 
-### JSON
+epoca: indice da epoca, comeca em 0.
 
-Contém os pontos da instância, os parâmetros, a semente, o motivo da parada e,
-para cada época, as rotas `rota` (da época) e `rota_global` (recorde até ali).
+distancia_epoca: melhor distancia daquela epoca.
 
----
+distancia_media: media da populacao na epoca.
 
-## 🧪 Testes
+distancia_pior: pior individuo da populacao.
+
+distancia_global: melhor distancia ate aquela epoca.
+
+tempo_segundos: tempo acumulado desde o inicio.
+
+## O que o algoritmo faz
+
+Cada individuo e uma permutacao das cidades, ou seja, uma rota. A distancia e a
+soma das distancias entre cidades vizinhas, fechando o ciclo. O objetivo e
+minimizar essa distancia. A aptidao usada e fitness = 1 / (1 + D).
+
+Selecao: torneio de k individuos.
+
+Cruzamento: Order Crossover (OX), que preserva a ordem relativa dos pais sem
+duplicar cidades.
+
+Mutacao: troca de duas posicoes, com probabilidade -m por filho.
+
+Elitismo: os -e melhores passam intactos, entao o recorde nunca piora.
+
+## Testes
 
 ```bash
 make test
 ```
 
-Cobrem: parâmetros inválidos, snapshots, as duas paradas, reprodutibilidade,
-cenário circular, cenário aleatório e exportação/comparação.
+Cobrem parametros invalidos, snapshots, as duas formas de parada,
+reprodutibilidade, os dois cenarios e exportacao/comparacao.
 
----
+## Limitacao conhecida
 
-## ⚠️ Limitação conhecida
+Com mutacao swap, uma troca por filho, o cenario circular acima de 50 pontos
+fica preso em otimo local.
 
-Com mutação **swap** (uma troca por filho), o cenário circular acima de ~50
-pontos fica preso em ótimo local:
+n 30: resultado 313,59, otimo 313,59, erro 0%.
 
-| n | resultado | ótimo | erro |
-|---|---|---|---|
-| 30 | 313,59 | 313,59 | 0% |
-| 50 | 530,16 | 314,16 | 69% |
-| 100 | 674,08 | 314,11 | 115% |
-| 200 | 1.502,55 | 314,16 | 378% |
+n 50: resultado 530,16, otimo 314,16, erro 69%.
 
-Para o bônus de 100/200 pontos, a melhoria recomendada é usar **mutação por
-inversão (2-opt)** em vez de swap.
+n 100: resultado 674,08, otimo 314,11, erro 115%.
 
----
+n 200: resultado 1502,55, otimo 314,16, erro 378%.
 
-## 📁 Estrutura do projeto
+Para o bonus de 100 e 200 pontos, a melhoria recomendada e usar mutacao por
+inversao (2-opt) em vez de swap.
 
-```
-Projeto_genes/
-├── include/
-│   ├── pontos.h
-│   ├── individuo.h
-│   ├── avaliacao.h
-│   ├── operadores.h
-│   └── genetico.h
-├── src/
-│   ├── pontos.c
-│   ├── individuo.c
-│   ├── avaliacao.c
-│   ├── operadores.c
-│   ├── genetico.c        ← motor evolutivo
-│   └── main.c            ← CLI
-├── tests/
-│   ├── test_genetico.c
-│   └── ...
-├── resultados/
-├── Makefile
-└── readme.md
+## Estrutura
+
+```text
+include/    cabecalhos
+src/        codigo-fonte
+tests/      testes
+resultados/ saidas geradas
+Makefile
+readme.md
 ```
 
----
-
-## 🔧 Compilação manual (sem Makefile)
+## Compilacao manual
 
 ```bash
 gcc -std=c11 -g -O1 -Wall -Wextra -Wpedantic -Iinclude \
@@ -290,7 +249,7 @@ gcc -std=c11 -g -O1 -Wall -Wextra -Wpedantic -Iinclude \
     -lm -o ag_tsp
 ```
 
-### Teste de integração do Integrante 1
+Teste de integracao do Integrante 1:
 
 ```bash
 gcc -std=c11 -g -O1 -Wall -Wextra -Wpedantic \
