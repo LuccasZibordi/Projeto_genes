@@ -7,6 +7,13 @@
 #include <string.h>
 #include <sys/stat.h>
 
+#ifdef _WIN32
+#include <direct.h>
+#define CRIAR_DIRETORIO(caminho) _mkdir(caminho)
+#else
+#define CRIAR_DIRETORIO(caminho) mkdir(caminho, 0777)
+#endif
+
 #include "genetico.h"
 #include "pontos.h"
 
@@ -35,7 +42,7 @@ static void uso(const char *programa) {
 
 // mkdir sem reclamar se o diretorio ja existe
 static int garantir_diretorio(const char *caminho) {
-    if (mkdir(caminho, 0777) == 0 || errno == EEXIST) {
+    if (CRIAR_DIRETORIO(caminho) == 0 || errno == EEXIST) {
         return 1;
     }
     return 0;
