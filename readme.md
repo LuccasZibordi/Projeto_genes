@@ -410,3 +410,9 @@ Para remover os executáveis gerados pelo Makefile:
 ```bash
 make clean
 ```
+
+## exemplos para a arguição
+
+make -B
+./ag_tsp -c circular -n 35 -o resultados_35
+.venv/bin/python visualizacao.py resultados_35/historico_circular_42.json --interativo
