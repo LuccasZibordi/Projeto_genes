@@ -13,9 +13,9 @@
 #include "operadores.h"
 #include "pontos.h"
 
-// ===============================================================
-// Utilidades
-// ===============================================================
+
+
+
 
 static double agora_segundos(void) {
     struct timespec ts;
@@ -53,11 +53,11 @@ static int parametros_validos(const ParametrosAG *p) {
     return 1;
 }
 
-// ===============================================================
-// População
-// ===============================================================
 
-// Fisher-Yates
+
+
+
+
 static void embaralhar_rota(int *rota, int n) {
     for (int i = n - 1; i > 0; i--) {
         int j = rand() % (i + 1);
@@ -76,7 +76,7 @@ static void liberar_populacao(Individuo **pop, int tamanho) {
     free(pop);
 }
 
-// Cria 'tamanho' indivíduos com rotas já embaralhadas.
+
 static Individuo **criar_populacao(int n, int tamanho) {
     Individuo **pop = malloc((size_t)tamanho * sizeof(Individuo *));
     if (pop == NULL) return NULL;
@@ -92,11 +92,11 @@ static Individuo **criar_populacao(int n, int tamanho) {
     return pop;
 }
 
-// ===============================================================
-// Avaliação e estatísticas
-// ===============================================================
 
-// Avalia uma única vez por indivíduo: distância e fitness andam juntos.
+
+
+
+
 static int avaliar_populacao(
     Individuo **pop,
     double *distancias,
@@ -110,7 +110,7 @@ static int avaliar_populacao(
         if (!isfinite(d)) return 0;
 
         distancias[i] = d;
-        fitness[i] = 1.0 / (1.0 + d);   // mesma fórmula de avaliacao.c
+        fitness[i] = 1.0 / (1.0 + d);
     }
     return 1;
 }
@@ -142,7 +142,7 @@ static void estatisticas(
     *pior = maior;
 }
 
-// Índices dos 'k' melhores por fitness, do melhor para o pior.
+
 static void top_k_indices(
     const double *fitness,
     int tamanho,
@@ -172,9 +172,9 @@ static void top_k_indices(
     }
 }
 
-// ===============================================================
-// Snapshots
-// ===============================================================
+
+
+
 
 static int registrar_snapshot(
     Resultado *r,
@@ -216,9 +216,9 @@ static int registrar_snapshot(
     return 1;
 }
 
-// ===============================================================
-// Motor evolutivo
-// ===============================================================
+
+
+
 
 Resultado *executar_ag(
     const Ponto *pontos,
@@ -233,7 +233,7 @@ Resultado *executar_ag(
     int tamanho = p->populacao;
     int elite = p->elite;
 
-    // Tudo que precisa ser liberado em caso de erro mora aqui.
+
     Resultado *r = NULL;
     Individuo **atual = NULL;
     Individuo **proxima = NULL;
@@ -252,7 +252,7 @@ Resultado *executar_ag(
     r = calloc(1, sizeof(Resultado));
     if (r == NULL) return NULL;
 
-    // Uma época por geração, mais a época 0.
+
     r->snapshots = calloc((size_t)p->geracoes_max + 1, sizeof(Snapshot));
     if (r->snapshots == NULL) goto falha;
 
@@ -284,7 +284,7 @@ Resultado *executar_ag(
 
     inicio = agora_segundos();
 
-    // Época 0: população inicial, antes de qualquer reprodução.
+
     if (!registrar_snapshot(r, 0, atual, distancias, tamanho, m,
                             melhor_global, melhor_global_dist,
                             agora_segundos() - inicio)) {
@@ -297,7 +297,7 @@ Resultado *executar_ag(
             top_k_indices(fitness, tamanho, elite, elite_idx);
         }
 
-        // 1) Reprodução: cada filho nasce de dois torneios.
+
         for (int i = 0; i < tamanho; i++) {
             int pai1 = selecao_torneio(fitness, tamanho, p->tamanho_torneio);
             int pai2 = selecao_torneio(fitness, tamanho, p->tamanho_torneio);
@@ -319,7 +319,7 @@ Resultado *executar_ag(
             }
         }
 
-        // 2) Elitismo: os melhores passam intactos.
+
         for (int e = 0; e < elite; e++) {
             if (!copiar_individuo(proxima[e], atual[elite_idx[e]])) {
                 motivo = PARADA_ERRO;
@@ -339,7 +339,7 @@ Resultado *executar_ag(
 
         m = melhor_indice(fitness, tamanho);
 
-        // 3) Recorde histórico (não confundir com o melhor da época).
+
         if (distancias[m] < melhor_global_dist) {
             melhor_global_dist = distancias[m];
             memcpy(melhor_global, atual[m]->rota, (size_t)n * sizeof(int));
@@ -348,7 +348,7 @@ Resultado *executar_ag(
             estagnacao++;
         }
 
-        // 4) Snapshot da época.
+
         tempo = agora_segundos() - inicio;
 
         if (!registrar_snapshot(r, epoca, atual, distancias, tamanho, m,
@@ -356,7 +356,7 @@ Resultado *executar_ag(
             goto falha;
         }
 
-        // 5) Critério de parada por estagnação.
+
         if (p->estagnacao_max > 0 && estagnacao >= p->estagnacao_max) {
             motivo = PARADA_ESTAGNACAO;
             break;
@@ -402,9 +402,9 @@ void liberar_resultado(Resultado *r) {
     free(r);
 }
 
-// ===============================================================
-// Exportação
-// ===============================================================
+
+
+
 
 const char *nome_motivo(MotivoParada m) {
     switch (m) {
@@ -497,9 +497,9 @@ int salvar_historico_json(const Resultado *r, const Ponto *pontos,
     return fclose(f) == 0;
 }
 
-// ===============================================================
-// Comparação de épocas (relê o CSV já gravado)
-// ===============================================================
+
+
+
 
 int comparar_epocas_csv(const char *caminho, int epoca_a, int epoca_b) {
     if (caminho == NULL || epoca_a < 0 || epoca_b < 0) return 0;
@@ -513,7 +513,7 @@ int comparar_epocas_csv(const char *caminho, int epoca_a, int epoca_b) {
     double global_a = NAN;
     double global_b = NAN;
 
-    // Cabeçalho
+
     if (fgets(linha, sizeof linha, f) == NULL) {
         fclose(f);
         return 0;

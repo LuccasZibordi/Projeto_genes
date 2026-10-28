@@ -19,7 +19,7 @@ static int total_falhas = 0;
         }                                                          \
     } while (0)
 
-// Cria um individuo com a rota fornecida
+
 static Individuo *criar_com_rota(const int *rota, int n) {
     Individuo *ind = criar_individuo(n);
     if (ind != NULL) {
@@ -28,7 +28,7 @@ static Individuo *criar_com_rota(const int *rota, int n) {
     return ind;
 }
 
-// Embaralha a rota (Fisher-Yates) para gerar pais aleatorios
+
 static void embaralhar(Individuo *ind) {
     for (int i = ind->quantidade - 1; i > 0; i--) {
         int j = rand() % (i + 1);
@@ -43,27 +43,27 @@ static int rotas_iguais(const Individuo *a, const Individuo *b) {
                   (size_t)a->quantidade * sizeof(int)) == 0;
 }
 
-// ---------------------------------------------------------------
-// Selecao por torneio
-// ---------------------------------------------------------------
+
+
+
 static void testar_selecao_torneio(void) {
 
     printf("Selecao por torneio\n");
 
     double fitness[10];
     for (int i = 0; i < 10; i++) {
-        fitness[i] = 0.1 * (i + 1);  // indice 9 e o melhor
+        fitness[i] = 0.1 * (i + 1);
     }
 
-    // Parametros invalidos
+
     VERIFICAR(selecao_torneio(NULL, 10, 3) == -1, "fitness NULL");
     VERIFICAR(selecao_torneio(fitness, 0, 3) == -1, "populacao vazia");
     VERIFICAR(selecao_torneio(fitness, 10, 0) == -1, "torneio zero");
 
-    // Populacao de tamanho 1 sempre devolve o indice 0
+
     VERIFICAR(selecao_torneio(fitness, 1, 5) == 0, "populacao unitaria");
 
-    // Fitness invalido deve ser detectado
+
     double ruim[3] = {0.5, 0.0 / 0.0, 0.2};
     int detectou = 0;
     for (int t = 0; t < 100; t++) {
@@ -73,7 +73,7 @@ static void testar_selecao_torneio(void) {
     }
     VERIFICAR(detectou, "detecta fitness NAN");
 
-    // Indice sempre dentro do intervalo
+
     int dentro = 1;
     for (int t = 0; t < 5000; t++) {
         int s = selecao_torneio(fitness, 10, 3);
@@ -83,8 +83,8 @@ static void testar_selecao_torneio(void) {
     }
     VERIFICAR(dentro, "indice sempre valido");
 
-    // Pressao seletiva: o melhor deve ser escolhido bem mais
-    // vezes que 10% (esperado ~27%) e o pior quase nunca (~0,1%)
+
+
     int vezes_melhor = 0, vezes_pior = 0;
     int tentativas = 20000;
     for (int t = 0; t < tentativas; t++) {
@@ -97,7 +97,7 @@ static void testar_selecao_torneio(void) {
     VERIFICAR(vezes_pior < tentativas * 0.02,
               "pior raramente vence (k=3)");
 
-    // Torneio grande: praticamente sempre o melhor
+
     int sempre_melhor = 0;
     for (int t = 0; t < 1000; t++) {
         if (selecao_torneio(fitness, 10, 100) == 9) {
@@ -107,9 +107,9 @@ static void testar_selecao_torneio(void) {
     VERIFICAR(sempre_melhor > 990, "torneio grande escolhe o melhor");
 }
 
-// ---------------------------------------------------------------
-// Order Crossover (OX)
-// ---------------------------------------------------------------
+
+
+
 static void testar_cruzamento_ox(void) {
 
     printf("Cruzamento OX\n");
@@ -121,9 +121,9 @@ static void testar_cruzamento_ox(void) {
     Individuo *p2 = criar_com_rota(r2, 8);
     Individuo *f = criar_individuo(8);
 
-    // Exemplo calculado a mao: corte [2, 4]
-    // trecho do pai1 = 2 3 4; resto na ordem do pai2 a partir
-    // da posicao 5: 1 0 7 6 5
+
+
+
     int esperado[8] = {6, 5, 2, 3, 4, 1, 0, 7};
     VERIFICAR(cruzamento_ox_pontos(p1, p2, f, 2, 4) == 1,
               "OX com cortes fixos retorna sucesso");
@@ -131,22 +131,22 @@ static void testar_cruzamento_ox(void) {
               "OX com cortes [2,4] gera o filho esperado");
     VERIFICAR(validar_rota(f), "filho do exemplo e permutacao valida");
 
-    // Trecho completo: filho identico ao pai1
+
     VERIFICAR(cruzamento_ox_pontos(p1, p2, f, 0, 7) == 1,
               "OX com trecho completo");
     VERIFICAR(rotas_iguais(f, p1), "trecho completo copia o pai1");
 
-    // Trecho de uma unica posicao
+
     VERIFICAR(cruzamento_ox_pontos(p1, p2, f, 3, 3) == 1,
               "OX com trecho unitario");
     VERIFICAR(validar_rota(f) && f->rota[3] == p1->rota[3],
               "trecho unitario valido e preserva a posicao 3");
 
-    // Pais nao sao alterados
+
     VERIFICAR(memcmp(p1->rota, r1, sizeof(r1)) == 0, "pai1 intacto");
     VERIFICAR(memcmp(p2->rota, r2, sizeof(r2)) == 0, "pai2 intacto");
 
-    // Parametros invalidos
+
     VERIFICAR(!cruzamento_ox_pontos(NULL, p2, f, 1, 2), "pai1 NULL");
     VERIFICAR(!cruzamento_ox_pontos(p1, NULL, f, 1, 2), "pai2 NULL");
     VERIFICAR(!cruzamento_ox_pontos(p1, p2, NULL, 1, 2), "filho NULL");
@@ -156,12 +156,12 @@ static void testar_cruzamento_ox(void) {
     VERIFICAR(!cruzamento_ox_pontos(p1, p2, p1, 1, 2),
               "filho nao pode ser o pai1");
 
-    // Tamanhos diferentes
+
     Individuo *grande = criar_individuo(9);
     VERIFICAR(!cruzamento_ox(p1, grande, f), "pais de tamanhos diferentes");
     liberar_individuo(grande);
 
-    // Pai invalido (cidade repetida)
+
     int ruim[8] = {0, 1, 2, 3, 4, 5, 6, 6};
     Individuo *pi = criar_com_rota(ruim, 8);
     VERIFICAR(!cruzamento_ox(pi, p2, f), "pai invalido e rejeitado");
@@ -171,8 +171,8 @@ static void testar_cruzamento_ox(void) {
     liberar_individuo(p2);
     liberar_individuo(f);
 
-    // Teste aleatorio: filhos sempre sao permutacoes validas,
-    // para varios tamanhos de rota
+
+
     int tamanhos[] = {8, 9, 15, 50, 200};
     int todos_validos = 1;
     int cortes_ok = 1;
@@ -192,7 +192,7 @@ static void testar_cruzamento_ox(void) {
                 todos_validos = 0;
             }
 
-            // Pais continuam validos
+
             if (!validar_rota(a) || !validar_rota(b)) {
                 cortes_ok = 0;
             }
@@ -206,7 +206,7 @@ static void testar_cruzamento_ox(void) {
     VERIFICAR(todos_validos, "10000 filhos aleatorios sao permutacoes validas");
     VERIFICAR(cortes_ok, "pais permanecem validos apos cruzamentos");
 
-    // Filho de pais identicos e igual aos pais
+
     Individuo *x = criar_individuo(12);
     Individuo *y = criar_individuo(12);
     Individuo *z = criar_individuo(12);
@@ -225,9 +225,9 @@ static void testar_cruzamento_ox(void) {
     liberar_individuo(z);
 }
 
-// ---------------------------------------------------------------
-// Mutacao Swap
-// ---------------------------------------------------------------
+
+
+
 static void testar_mutacao_swap(void) {
 
     printf("Mutacao Swap\n");
@@ -235,27 +235,27 @@ static void testar_mutacao_swap(void) {
     int base[8] = {0, 1, 2, 3, 4, 5, 6, 7};
     Individuo *ind = criar_com_rota(base, 8);
 
-    // Troca conhecida
+
     VERIFICAR(mutacao_swap_posicoes(ind, 1, 6) == 1, "swap fixo retorna sucesso");
     int esperado[8] = {0, 6, 2, 3, 4, 5, 1, 7};
     VERIFICAR(memcmp(ind->rota, esperado, sizeof(esperado)) == 0,
               "swap(1,6) gera a rota esperada");
     VERIFICAR(validar_rota(ind), "rota continua valida apos swap");
 
-    // Trocar a mesma posicao nao altera nada
+
     memcpy(ind->rota, base, sizeof(base));
     VERIFICAR(mutacao_swap_posicoes(ind, 3, 3) == 1, "swap(i,i)");
     VERIFICAR(memcmp(ind->rota, base, sizeof(base)) == 0,
               "swap(i,i) nao altera a rota");
 
-    // Parametros invalidos
+
     VERIFICAR(!mutacao_swap_posicoes(NULL, 0, 1), "individuo NULL");
     VERIFICAR(!mutacao_swap_posicoes(ind, -1, 1), "posicao negativa");
     VERIFICAR(!mutacao_swap_posicoes(ind, 0, 8), "posicao >= n");
     VERIFICAR(!mutacao_swap(NULL), "mutacao_swap com NULL");
 
-    // Mutacao aleatoria: altera exatamente 2 posicoes e mantem
-    // a rota como permutacao valida
+
+
     Individuo *antes = criar_individuo(20);
     Individuo *mut = criar_individuo(20);
     int sempre_duas = 1;
@@ -288,7 +288,7 @@ static void testar_mutacao_swap(void) {
     VERIFICAR(sempre_duas, "mutacao altera exatamente 2 posicoes");
     VERIFICAR(sempre_valida, "5000 mutacoes mantem permutacao valida");
 
-    // Todas as posicoes podem ser sorteadas
+
     int visto[20] = {0};
     for (int rep = 0; rep < 5000; rep++) {
         for (int i = 0; i < 20; i++) mut->rota[i] = i;
@@ -308,9 +308,9 @@ static void testar_mutacao_swap(void) {
     liberar_individuo(mut);
 }
 
-// ---------------------------------------------------------------
-// Taxas de cruzamento e mutacao
-// ---------------------------------------------------------------
+
+
+
 static void testar_taxas(void) {
 
     printf("Taxas de cruzamento e mutacao\n");
@@ -320,7 +320,7 @@ static void testar_taxas(void) {
     Individuo *f = criar_individuo(10);
     int aplicado = -1;
 
-    // Taxas invalidas
+
     VERIFICAR(!aplicar_cruzamento(p1, p2, f, -0.1, &aplicado),
               "taxa de cruzamento negativa");
     VERIFICAR(!aplicar_cruzamento(p1, p2, f, 1.5, &aplicado),
@@ -330,7 +330,7 @@ static void testar_taxas(void) {
     VERIFICAR(!aplicar_mutacao(p1, 1.5, &aplicado),
               "taxa de mutacao > 1");
 
-    // Taxa de cruzamento 0: filho e clone do pai1
+
     int sempre_clone = 1;
     int nunca_aplicou = 1;
     for (int rep = 0; rep < 1000; rep++) {
@@ -345,7 +345,7 @@ static void testar_taxas(void) {
     VERIFICAR(sempre_clone, "taxa 0: filho e copia do pai1");
     VERIFICAR(nunca_aplicou, "taxa 0: cruzamento nunca ocorre");
 
-    // Taxa de cruzamento 1: sempre cruza e o filho e valido
+
     int sempre_aplicou = 1;
     int sempre_valido = 1;
     for (int rep = 0; rep < 1000; rep++) {
@@ -360,7 +360,7 @@ static void testar_taxas(void) {
     VERIFICAR(sempre_aplicou, "taxa 1: cruzamento sempre ocorre");
     VERIFICAR(sempre_valido, "taxa 1: filhos sempre validos");
 
-    // Taxa de cruzamento 0.8: frequencia observada proxima de 80%
+
     int ocorreu = 0, tentativas = 20000;
     for (int rep = 0; rep < tentativas; rep++) {
         aplicar_cruzamento(p1, p2, f, 0.8, &aplicado);
@@ -372,11 +372,11 @@ static void testar_taxas(void) {
               "taxa 0.8: frequencia observada proxima de 80%");
     VERIFICAR(sempre_valido, "taxa 0.8: filhos sempre validos");
 
-    // aplicado pode ser NULL
+
     VERIFICAR(aplicar_cruzamento(p1, p2, f, 0.5, NULL) == 1,
               "aplicado == NULL e aceito (cruzamento)");
 
-    // Taxa de mutacao 0: rota nunca muda
+
     Individuo *ind = criar_individuo(10);
     Individuo *copia = criar_individuo(10);
     int intacto = 1;
@@ -388,7 +388,7 @@ static void testar_taxas(void) {
     }
     VERIFICAR(intacto, "taxa 0: mutacao nunca ocorre");
 
-    // Taxa de mutacao 1: sempre muda e permanece valida
+
     int sempre_mudou = 1;
     int valida = 1;
     for (int rep = 0; rep < 1000; rep++) {
@@ -401,7 +401,7 @@ static void testar_taxas(void) {
     VERIFICAR(sempre_mudou, "taxa 1: mutacao sempre altera a rota");
     VERIFICAR(valida, "taxa 1: rota segue valida");
 
-    // Taxa de mutacao 0.05: frequencia observada proxima de 5%
+
     int mutou = 0;
     for (int rep = 0; rep < tentativas; rep++) {
         aplicar_mutacao(ind, 0.05, &aplicado);

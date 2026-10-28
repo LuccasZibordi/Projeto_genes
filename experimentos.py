@@ -37,21 +37,21 @@ import visualizacao as viz
 
 DIR_PROJETO = os.path.dirname(os.path.abspath(__file__))
 
-# Executavel gerado pelo seu build. Se o nome for outro, use --exe ou
-# a variavel de ambiente AG_EXE.
+
+
 NOMES_EXECUTAVEL = ("ag_tsp", "genetico", "tsp", "main", "ag", "projeto")
 PASTAS_EXECUTAVEL = (".", "build", "bin", "out")
 EXECUTAVEL = None
 SAIDA = os.path.join(DIR_PROJETO, "resultados")
 GRAFICOS = os.path.join(DIR_PROJETO, "graficos")
 
-# Tolerancias usadas para definir "convergiu" no cenario circular
+
 TOLERANCIAS = (0.10, 0.05, 0.01)
 
 
-# ----------------------------------------------------------------------
-# Execucao do programa em C
-# ----------------------------------------------------------------------
+
+
+
 def _achar_executavel():
     """Procura o executavel nas pastas/nomes mais comuns."""
     for pasta in PASTAS_EXECUTAVEL:
@@ -91,7 +91,7 @@ def compilar(forcar=False, exe=None):
                 print(f"{ferramenta} nao gerou um executavel reconhecido; tentando gcc direto")
                 break
 
-    # Sem Makefile (ou sem achar o resultado): gcc direto em src/ e include/
+
     fontes = sorted(glob.glob(os.path.join(DIR_PROJETO, "src", "*.c"))) \
         or sorted(glob.glob(os.path.join(DIR_PROJETO, "*.c")))
     if not fontes:
@@ -129,9 +129,9 @@ def executar(cenario, n, pasta, semente=42, **ag):
     return viz.carregar_historico(os.path.join(pasta, f"historico_{cenario}_{semente}.json"))
 
 
-# ----------------------------------------------------------------------
-# Metricas de convergencia
-# ----------------------------------------------------------------------
+
+
+
 def primeira_epoca_ate(hist, tolerancia):
     """Primeira epoca em que o recorde global fica a 'tolerancia' do otimo.
     Devolve (epoca, tempo_s) ou (None, None) se nunca chegou."""
@@ -196,9 +196,9 @@ def imprimir_resumo(r):
     print()
 
 
-# ----------------------------------------------------------------------
-# Experimentos
-# ----------------------------------------------------------------------
+
+
+
 def exp_cenario(cenario, n, semente=42, animacao=True, **ag):
     """Executa um cenario e gera todos os graficos (convergencia, epocas, GIF)."""
     print(f"[{cenario}] n={n}")
@@ -281,7 +281,7 @@ def exp_bonus(n=100, semente=42, **ag):
     pasta_g = os.path.join(GRAFICOS, f"bonus_n{n}")
     arquivos = viz.gerar_relatorio(hist, pasta_g, animacao=False)
 
-    # Rotas intermediarias com marcadores de tempo
+
     epocas = viz.epocas_representativas(hist, 8)
     arq = os.path.join(pasta_g, f"epocas_intermediarias_n{n}.png")
     viz.plotar_epocas(hist, epocas, usar_global=True, salvar=arq)
@@ -335,9 +335,9 @@ def exp_sementes(n_aleatorio=30, n_circular=20, sementes=range(1, 11), **ag):
     print("  salvo:", os.path.relpath(destino, DIR_PROJETO))
 
 
-# ----------------------------------------------------------------------
-# CLI
-# ----------------------------------------------------------------------
+
+
+
 def main():
     ap = argparse.ArgumentParser(description="Experimentos do AG para o TSP")
     ap.add_argument("experimento",
@@ -365,9 +365,9 @@ def main():
           ("populacao", "geracoes", "elite", "torneio", "cruzamento", "mutacao", "estagnacao")}
     gif = not a.sem_gif
 
-    # Parametros para n grande. Calibrados experimentalmente: com a mutacao padrao
-    # (0.10) o AG fica preso em otimos locais para n >= 100; 0.50 com populacao
-    # e torneio maiores converge para o otimo em n=100.
+
+
+
     ag_grande = dict(ag)
     padroes_grande = {"geracoes": 20000, "estagnacao": 3000, "populacao": 500,
                       "mutacao": 0.5, "torneio": 5}

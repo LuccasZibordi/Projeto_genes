@@ -34,7 +34,7 @@ Individuo *criar_individuo(int quantidade) {
 
     individuo->quantidade = quantidade;
 
-    // Inicializa imediatamente para evitar rota indefinida
+
     inicializar_rota(individuo);
 
     return individuo;
@@ -65,7 +65,7 @@ int validar_rota(const Individuo *individuo) {
 
     int n = individuo->quantidade;
 
-    // Cada posicao indica se uma cidade ja apareceu
+
     unsigned char *visitados = calloc(
         (size_t)n, sizeof(unsigned char)
     );
@@ -78,13 +78,13 @@ int validar_rota(const Individuo *individuo) {
 
         int cidade = individuo->rota[i];
 
-        // Verifica indices fora do intervalo
+
         if (cidade < 0 || cidade >= n) {
             free(visitados);
             return 0;
         }
 
-        // Verifica cidades repetidas
+
         if (visitados[cidade]) {
             free(visitados);
             return 0;
@@ -113,7 +113,7 @@ int copiar_individuo(
         return 0;
     }
 
-    // Aceita copiar o individuo para ele mesmo
+
     if (destino == origem) {
         return 1;
     }

@@ -22,7 +22,7 @@ int gerar_pontos_aleatorios(
     double maximo_y
 );
 
-// Gera pontos igualmente espacados sobre uma circunferencia
+
 int gerar_pontos_circulares(
     Ponto *pontos,
     int quantidade,
@@ -31,7 +31,7 @@ int gerar_pontos_circulares(
     double raio
 );
 
-// Calcula a distancia otima do cenario circular
+
 double distancia_otima_circular(int quantidade, double raio);
 
 #endif

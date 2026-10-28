@@ -31,17 +31,17 @@ int gerar_pontos_aleatorios(
     double minimo_y,
     double maximo_y
 ) {
-    // Verifica se o vetor existe
+
     if (pontos == NULL) {
         return 0;
     }
 
-    // O projeto exige pelo menos 8 pontos
+
     if (quantidade < 8) {
         return 0;
     }
 
-    // Verifica se os limites sao validos e finitos
+
     if (!isfinite(minimo_x) || !isfinite(maximo_x) ||
         !isfinite(minimo_y) || !isfinite(maximo_y)) {
         return 0;
@@ -51,13 +51,13 @@ int gerar_pontos_aleatorios(
         return 0;
     }
 
-    // Evita intervalos que estourariam a faixa de double
+
     if (!isfinite(maximo_x - minimo_x) ||
         !isfinite(maximo_y - minimo_y)) {
         return 0;
     }
 
-    // Gera as coordenadas dos pontos
+
     for (int i = 0; i < quantidade; i++) {
         pontos[i].x = aleatorio_intervalo(minimo_x, maximo_x);
         pontos[i].y = aleatorio_intervalo(minimo_y, maximo_y);
@@ -73,7 +73,7 @@ int gerar_pontos_circulares(
     double centro_y,
     double raio
 ) {
-    // Verifica se os parametros sao validos
+
     if (pontos == NULL || quantidade < 8 ||
         !isfinite(centro_x) || !isfinite(centro_y) ||
         !isfinite(raio) || raio <= 0.0 ||
@@ -86,7 +86,7 @@ int gerar_pontos_circulares(
 
     const double pi = acos(-1.0);
 
-    // Gera os pontos igualmente espacados no circulo
+
     for (int i = 0; i < quantidade; i++) {
         double angulo =
             2.0 * pi * (double)i / (double)quantidade;

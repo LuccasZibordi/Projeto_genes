@@ -3,7 +3,7 @@
 
 #include "avaliacao.h"
 
-// Calcula a distancia euclidiana entre dois pontos
+
 double distancia_euclidiana(Ponto a, Ponto b) {
 
     double dx = b.x - a.x;
@@ -12,13 +12,13 @@ double distancia_euclidiana(Ponto a, Ponto b) {
     return hypot(dx, dy);
 }
 
-// Calcula o comprimento completo de uma rota ciclica
+
 double distancia_total(
     const Individuo *individuo,
     const Ponto *pontos,
     int quantidade_pontos
 ) {
-    // Verifica os parametros
+
     if (individuo == NULL || pontos == NULL ||
         individuo->rota == NULL ||
         quantidade_pontos < 8 ||
@@ -26,7 +26,7 @@ double distancia_total(
         return NAN;
     }
 
-    // Garante que a rota e uma permutacao valida
+
     if (!validar_rota(individuo)) {
         return NAN;
     }
@@ -38,8 +38,8 @@ double distancia_total(
 
         int atual = individuo->rota[i];
 
-        // O operador % faz a ultima cidade voltar
-        // para a primeira cidade da rota
+
+
         int proximo = individuo->rota[(i + 1) % n];
 
         Ponto a = pontos[atual];
@@ -61,7 +61,7 @@ double distancia_total(
     return total;
 }
 
-// Calcula a aptidao do individuo
+
 double calcular_fitness(
     const Individuo *individuo,
     const Ponto *pontos,

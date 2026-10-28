@@ -31,7 +31,7 @@ import sys
 
 import matplotlib
 
-# Sem DISPLAY (servidor, WSL sem X) usa backend de arquivo.
+
 if os.environ.get("MPLBACKEND") is None and sys.platform.startswith("linux") \
         and not os.environ.get("DISPLAY") and not os.environ.get("WAYLAND_DISPLAY"):
     matplotlib.use("Agg")
@@ -40,7 +40,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.widgets import Slider
 
-# Paleta usada em todos os graficos
+
 COR_MELHOR = "#1f77b4"
 COR_GLOBAL = "#d62728"
 COR_MEDIA = "#7f7f7f"
@@ -48,9 +48,9 @@ COR_PIOR = "#bbbbbb"
 COR_OTIMO = "#2ca02c"
 
 
-# ----------------------------------------------------------------------
-# Leitura dos dados
-# ----------------------------------------------------------------------
+
+
+
 class Historico:
     """Conteudo de um historico_*.json, com acesso pratico por epoca."""
 
@@ -71,7 +71,7 @@ class Historico:
         nome = os.path.basename(caminho).lower()
         self.cenario = "circular" if "circular" in nome else "aleatorio"
 
-        # Vetores prontos para plotar
+
         self.epocas = np.array([s["epoca"] for s in self.snapshots])
         self.d_epoca = np.array([s["distancia_epoca"] for s in self.snapshots])
         self.d_media = np.array([s["distancia_media"] for s in self.snapshots])
@@ -111,9 +111,9 @@ def carregar_metricas_csv(caminho):
     return {nome: dados[nome] for nome in dados.dtype.names}
 
 
-# ----------------------------------------------------------------------
-# Rotas
-# ----------------------------------------------------------------------
+
+
+
 def plotar_rota(ax, hist, epoca, usar_global=False, otimo=True):
     """Desenha a rota de uma epoca em ax.
 
@@ -131,7 +131,7 @@ def plotar_rota(ax, hist, epoca, usar_global=False, otimo=True):
     ax.plot(xs, ys, "-", color=COR_MELHOR, lw=1.6 if grande else 1.4, zorder=1)
     ax.scatter(hist.pontos[:, 0], hist.pontos[:, 1], s=6 if grande else 28, c="black", zorder=2)
 
-    # Ponto de partida e seta de sentido
+
     ax.scatter(*hist.pontos[rota[0]], s=70, c=COR_GLOBAL, zorder=3)
     if hist.n <= 60:
         for k in range(len(rota)):
@@ -180,9 +180,9 @@ def epocas_representativas(hist, quantidade=8):
     return [0] + [int(v) for v in valores]
 
 
-# ----------------------------------------------------------------------
-# Convergencia
-# ----------------------------------------------------------------------
+
+
+
 def plotar_convergencia(hist, log_y=False, salvar=None):
     """Distancia por geracao: melhor da epoca, recorde global, media e pior."""
     fig, ax = plt.subplots(figsize=(9, 5))
@@ -211,9 +211,9 @@ def plotar_convergencia(hist, log_y=False, salvar=None):
     return _finalizar(fig, salvar)
 
 
-# ----------------------------------------------------------------------
-# Navegacao interativa e animacao
-# ----------------------------------------------------------------------
+
+
+
 def visualizador_interativo(hist):
     """Janela com a rota e um slider de epoca (setas esquerda/direita tambem)."""
     fig = plt.figure(figsize=(11, 5.5))
@@ -249,7 +249,7 @@ def visualizador_interativo(hist):
     atualizar(0)
     fig.suptitle(hist.rotulo())
     plt.show()
-    return slider  # evita o slider ser coletado pelo GC
+    return slider
 
 
 def gerar_animacao(hist, caminho, quadros=60, fps=10, usar_global=True):
@@ -276,9 +276,9 @@ def gerar_animacao(hist, caminho, quadros=60, fps=10, usar_global=True):
     return caminho
 
 
-# ----------------------------------------------------------------------
-# Comparacao de cenarios
-# ----------------------------------------------------------------------
+
+
+
 def comparar_cenarios(hist_a, hist_b, salvar=None):
     """Compara dois historicos (tipicamente aleatorio x circular).
 
@@ -288,12 +288,12 @@ def comparar_cenarios(hist_a, hist_b, salvar=None):
     fig, axes = plt.subplots(2, 2, figsize=(12, 9))
 
     for hist, cor in ((hist_a, COR_MELHOR), (hist_b, COR_GLOBAL)):
-        # Distancia absoluta
+
         axes[0, 0].plot(hist.epocas, hist.d_global, color=cor, lw=1.8, label=hist.rotulo())
-        # Distancia relativa ao valor final
+
         axes[0, 1].plot(hist.epocas, hist.d_global / hist.melhor_distancia, color=cor, lw=1.8,
                         label=hist.rotulo())
-        # Convergencia no tempo real
+
         axes[1, 0].plot(hist.tempo, hist.d_global / hist.melhor_distancia, color=cor, lw=1.8,
                         label=hist.rotulo())
 
@@ -313,7 +313,7 @@ def comparar_cenarios(hist_a, hist_b, salvar=None):
         ax.grid(alpha=0.3)
         ax.legend(fontsize=8)
 
-    # Tabela-resumo
+
     ax_t = axes[1, 1]
     ax_t.axis("off")
     cabecalho = ["", hist_a.cenario, hist_b.cenario]
@@ -348,9 +348,9 @@ def _fmt_erro(h):
     return f"{100 * (h.melhor_distancia - o) / o:.3f}%" if o is not None else "n/d"
 
 
-# ----------------------------------------------------------------------
-# Relatorio completo
-# ----------------------------------------------------------------------
+
+
+
 def gerar_relatorio(hist, pasta, epocas=None, animacao=False):
     """Salva convergencia, grade de epocas (melhor da geracao e global) e,
     opcionalmente, o GIF. Devolve a lista de arquivos criados."""
@@ -382,9 +382,9 @@ def gerar_relatorio(hist, pasta, epocas=None, animacao=False):
     return arquivos
 
 
-# ----------------------------------------------------------------------
-# Utilidades
-# ----------------------------------------------------------------------
+
+
+
 def _garantir_pasta(caminho):
     pasta = os.path.dirname(caminho)
     if pasta:

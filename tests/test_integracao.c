@@ -11,13 +11,13 @@
 
 #define EPS 1e-9
 
-// Compara valores de ponto flutuante usando
-// tolerancia relativa e absoluta.
+
+
 int aproximadamente_igual(double a, double b) {
     return fabs(a - b) <= EPS * fmax(1.0, fmax(fabs(a), fabs(b)));
 }
 
-// Testa todos os modulos no cenario aleatorio.
+
 void testar_aleatorio(int n) {
 
     printf("\n[TESTE ALEATORIO] %d pontos\n", n);
@@ -28,7 +28,7 @@ void testar_aleatorio(int n) {
     assert(pontos != NULL);
     assert(copia_pontos != NULL);
 
-    // Usa uma semente fixa para reproduzir o teste.
+
     configurar_semente(42);
 
     assert(gerar_pontos_aleatorios(
@@ -37,7 +37,7 @@ void testar_aleatorio(int n) {
         0.0, 100.0
     ) == 1);
 
-    // Verifica se todos os pontos estao na regiao.
+
     for (int i = 0; i < n; i++) {
         assert(isfinite(pontos[i].x));
         assert(isfinite(pontos[i].y));
@@ -48,7 +48,7 @@ void testar_aleatorio(int n) {
         assert(pontos[i].y <= 100.0);
     }
 
-    // Verifica a reproducibilidade da semente.
+
     configurar_semente(42);
 
     assert(gerar_pontos_aleatorios(
@@ -62,7 +62,7 @@ void testar_aleatorio(int n) {
         assert(pontos[i].y == copia_pontos[i].y);
     }
 
-    // Cria e valida o individuo.
+
     Individuo *individuo = criar_individuo(n);
     assert(individuo != NULL);
     assert(validar_rota(individuo) == 1);
@@ -81,32 +81,32 @@ void testar_aleatorio(int n) {
         fitness, 1.0 / (1.0 + distancia)
     ));
 
-    // Testa a copia independente.
+
     Individuo *copia = criar_individuo(n);
     assert(copia != NULL);
 
     assert(copiar_individuo(copia, individuo) == 1);
 
-    // A copia possui os mesmos valores.
+
     for (int i = 0; i < n; i++) {
         assert(copia->rota[i] == individuo->rota[i]);
     }
 
-    // Mas nao compartilha o mesmo vetor.
+
     assert(copia->rota != individuo->rota);
 
-    // Trocar duas cidades mantem uma rota valida.
+
     int temp = copia->rota[0];
     copia->rota[0] = copia->rota[1];
     copia->rota[1] = temp;
 
     assert(validar_rota(copia) == 1);
 
-    // A alteracao nao modifica o original.
+
     assert(individuo->rota[0] == 0);
     assert(individuo->rota[1] == 1);
 
-    // Verifica se duplicatas sao detectadas.
+
     copia->rota[1] = copia->rota[0];
 
     assert(validar_rota(copia) == 0);
@@ -125,7 +125,7 @@ void testar_aleatorio(int n) {
     printf("Resultado: OK\n");
 }
 
-// Testa todos os modulos no cenario circular.
+
 void testar_circular(int n) {
 
     printf("\n[TESTE CIRCULAR] %d pontos\n", n);
@@ -141,7 +141,7 @@ void testar_circular(int n) {
         pontos, n, cx, cy, raio
     ) == 1);
 
-    // Verifica a distancia de cada ponto ao centro.
+
     for (int i = 0; i < n; i++) {
         double d = hypot(
             pontos[i].x - cx,
@@ -154,8 +154,8 @@ void testar_circular(int n) {
     Individuo *individuo = criar_individuo(n);
     assert(individuo != NULL);
 
-    // A rota 0,1,2,...,n-1 percorre o circulo
-    // na ordem geometrica correta.
+
+
     double obtida = distancia_total(
         individuo, pontos, n
     );
@@ -168,7 +168,7 @@ void testar_circular(int n) {
     assert(isfinite(teorica));
     assert(aproximadamente_igual(obtida, teorica));
 
-    // Modifica a ordem para criar uma rota pior.
+
     int meio = n / 2;
 
     int temp = individuo->rota[1];

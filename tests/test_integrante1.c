@@ -6,7 +6,7 @@
 
 int main(void) {
 
-    // Criando oito pontos manualmente
+
     Ponto pontos[8];
 
     pontos[0] = criar_ponto(10.0, 20.0);
@@ -29,7 +29,7 @@ int main(void) {
         );
     }
 
-    // Criando um individuo
+
     Individuo *individuo = criar_individuo(8);
 
     if (individuo == NULL) {
@@ -49,10 +49,10 @@ int main(void) {
         printf("%d -> ", individuo->rota[i]);
     }
 
-    // Retorno a cidade inicial
+
     printf("%d\n", individuo->rota[0]);
 
-    // Liberando memoria
+
     liberar_individuo(individuo);
 
     printf("\nTeste concluido.\n");

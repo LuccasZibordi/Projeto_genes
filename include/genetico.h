@@ -4,14 +4,14 @@
 #include "pontos.h"
 
 typedef struct {
-    int populacao;  //individuos por geração
-    int geracoes_max;   //teto de gerações
-    int estagnacao_max;  //teto de gerações sem melhora
-    int elite;  //individuos copiados sem alteração para a próxima geração
-    int tamanho_torneio;    //k da seleção
-    double taxa_cruzamento; //0..1
-    double taxa_mutacao;    //0..1
-    unsigned int semente;   //semente do RNG
+    int populacao;
+    int geracoes_max;
+    int estagnacao_max;
+    int elite;
+    int tamanho_torneio;
+    double taxa_cruzamento;
+    double taxa_mutacao;
+    unsigned int semente;
 } ParametrosAG;
 
 typedef enum {
@@ -21,20 +21,20 @@ typedef enum {
 } MotivoParada;
 
 typedef struct {
-    int epoca;                // inclui a epoca 0
-    int quantidade;           // n
-    int *rota;                // melhor rota DA EPOCA
-    int *rota_global;         // melhor rota GLOBAL ate a epoca
+    int epoca;
+    int quantidade;
+    int *rota;
+    int *rota_global;
     double distancia_epoca;
     double distancia_global;
     double distancia_media;
     double distancia_pior;
-    double tempo_segundos;    // acumulado
+    double tempo_segundos;
 } Snapshot;
 
 typedef struct {
     int quantidade;
-    int *rota;                // melhor rota global final
+    int *rota;
     double distancia;
     Snapshot *snapshots;
     int total_snapshots;

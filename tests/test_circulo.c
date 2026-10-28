@@ -16,7 +16,7 @@ int main(void) {
     const double cy = 50.0;
     const double raio = 20.0;
 
-    // Gerar 12 pontos em uma circunferencia
+
     assert(gerar_pontos_circulares(
         pontos, N, cx, cy, raio
     ) == 1);
@@ -32,13 +32,13 @@ int main(void) {
             i, pontos[i].x, pontos[i].y
         );
 
-        // Verifica a distancia ate o centro
+
         double dx = pontos[i].x - cx;
         double dy = pontos[i].y - cy;
 
         assert(fabs(hypot(dx, dy) - raio) < EPS);
 
-        // Proximo ponto, incluindo retorno ao primeiro
+
         int proximo = (i + 1) % N;
 
         distancia_perimetro += hypot(
@@ -49,10 +49,10 @@ int main(void) {
 
     double otima = distancia_otima_circular(N, raio);
 
-    // Compara percurso calculado e valor teorico
+
     assert(fabs(distancia_perimetro - otima) < EPS);
 
-    // Verifica parametros invalidos
+
     assert(gerar_pontos_circulares(
         NULL, N, cx, cy, raio
     ) == 0);

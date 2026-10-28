@@ -40,7 +40,7 @@ static void uso(const char *programa) {
         programa);
 }
 
-// mkdir sem reclamar se o diretorio ja existe
+
 static int garantir_diretorio(const char *caminho) {
     if (CRIAR_DIRETORIO(caminho) == 0 || errno == EEXIST) {
         return 1;
@@ -50,7 +50,7 @@ static int garantir_diretorio(const char *caminho) {
 
 int main(int argc, char **argv) {
     int n = 20;
-    int cenario = 0;                 // 0 = circular, 1 = aleatorio
+    int cenario = 0;
     int comparar = 0;
     const char *arquivo_comparar = NULL;
     const char *saida = "resultados";
@@ -101,7 +101,7 @@ int main(int argc, char **argv) {
         }
     }
 
-    // Modo comparacao: le um CSV ja gravado, nao executa o AG.
+
     if (comparar) {
         if (argc - optind != 2) {
             fprintf(stderr, "uso: %s -C ARQUIVO.csv EPOCA_A EPOCA_B\n", argv[0]);

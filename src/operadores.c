@@ -4,12 +4,12 @@
 
 #include "operadores.h" 
 
-// Sorteia um real no intervalo [0, 1)
+
 static double aleatorio_unitario(void) {
     return (double)rand() / ((double)RAND_MAX + 1.0);
 }
 
-// Sorteia um inteiro no intervalo [minimo, maximo]
+
 static int inteiro_aleatorio(int minimo, int maximo) {
 
     if (minimo >= maximo) {
@@ -19,7 +19,7 @@ static int inteiro_aleatorio(int minimo, int maximo) {
     long long faixa = (long long)maximo - (long long)minimo + 1;
     int valor = minimo + (int)(aleatorio_unitario() * (double)faixa);
 
-    // Protecao contra arredondamento
+
     if (valor > maximo) {
         valor = maximo;
     }
@@ -27,7 +27,7 @@ static int inteiro_aleatorio(int minimo, int maximo) {
     return valor;
 }
 
-// Verifica se a taxa e um numero finito entre 0 e 1
+
 static int taxa_valida(double taxa) {
     return isfinite(taxa) && taxa >= 0.0 && taxa <= 1.0;
 }
@@ -49,7 +49,7 @@ int selecao_torneio(
 
         int candidato = inteiro_aleatorio(0, tamanho_populacao - 1);
 
-        // Fitness invalido (NAN/infinito) indica individuo invalido
+
         if (!isfinite(fitness[candidato])) {
             return -1;
         }
@@ -70,7 +70,7 @@ int cruzamento_ox_pontos(
     int fim
 ) {
 
-    // Verifica os parametros
+
     if (pai1 == NULL || pai2 == NULL || filho == NULL ||
         pai1->rota == NULL || pai2->rota == NULL ||
         filho->rota == NULL) {
@@ -83,8 +83,8 @@ int cruzamento_ox_pontos(
         return 0;
     }
 
-    // O filho nao pode ser o mesmo objeto que um dos pais,
-    // senao a escrita destruiria os dados que ainda sao lidos
+
+
     if (filho == pai1 || filho == pai2) {
         return 0;
     }
@@ -93,26 +93,26 @@ int cruzamento_ox_pontos(
         return 0;
     }
 
-    // Os pais precisam ser permutacoes validas
+
     if (!validar_rota(pai1) || !validar_rota(pai2)) {
         return 0;
     }
 
-    // Marca as cidades que ja estao no filho
+
     unsigned char *usado = calloc((size_t)n, sizeof(unsigned char));
 
     if (usado == NULL) {
         return 0;
     }
 
-    // 1) Copia o trecho [inicio, fim] do pai1
+
     for (int i = inicio; i <= fim; i++) {
         filho->rota[i] = pai1->rota[i];
         usado[pai1->rota[i]] = 1;
     }
 
-    // 2) Preenche o restante com a ordem do pai2, comecando
-    //    logo apos o segundo corte e voltando ao inicio (ciclico)
+
+
     int destino = (fim + 1) % n;
 
     for (int k = 0; k < n; k++) {
@@ -146,7 +146,7 @@ int cruzamento_ox(
     int a = inteiro_aleatorio(0, n - 1);
     int b = inteiro_aleatorio(0, n - 1);
 
-    // Garante inicio <= fim
+
     if (a > b) {
         int temp = a;
         a = b;
@@ -187,7 +187,7 @@ int mutacao_swap(Individuo *individuo) {
 
     int i = inteiro_aleatorio(0, n - 1);
 
-    // Sorteia j entre as demais posicoes (garante i != j)
+
     int j = inteiro_aleatorio(0, n - 2);
 
     if (j >= i) {
@@ -226,7 +226,7 @@ int aplicar_cruzamento(
         return 1;
     }
 
-    // Sem cruzamento: o filho e um clone do pai1
+
     if (!validar_rota(pai1)) {
         return 0;
     }

@@ -13,7 +13,7 @@ int main(void) {
 
     unsigned int semente = 42;
 
-    // Primeiro teste: geracao normal
+
     configurar_semente(semente);
 
     int sucesso = gerar_pontos_aleatorios(
@@ -35,14 +35,14 @@ int main(void) {
             pontos[i].y
         );
 
-        // Verifica os limites
+
         assert(pontos[i].x >= 0.0);
         assert(pontos[i].x <= 100.0);
         assert(pontos[i].y >= 0.0);
         assert(pontos[i].y <= 100.0);
     }
 
-    // Segundo teste: reproducibilidade
+
     configurar_semente(semente);
 
     sucesso = gerar_pontos_aleatorios(
@@ -59,7 +59,7 @@ int main(void) {
         assert(pontos[i].y == repetidos[i].y);
     }
 
-    // Terceiro teste: quantidade invalida
+
     sucesso = gerar_pontos_aleatorios(
         pontos,
         5,
@@ -69,7 +69,7 @@ int main(void) {
 
     assert(sucesso == 0);
 
-    // Quarto teste: limites invalidos
+
     sucesso = gerar_pontos_aleatorios(
         pontos,
         QUANTIDADE,
@@ -79,7 +79,7 @@ int main(void) {
 
     assert(sucesso == 0);
 
-    // Quinto teste: ponteiro nulo
+
     sucesso = gerar_pontos_aleatorios(
         NULL,
         QUANTIDADE,
